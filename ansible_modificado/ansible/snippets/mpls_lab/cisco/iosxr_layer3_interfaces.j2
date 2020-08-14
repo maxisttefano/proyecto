@@ -1,0 +1,21 @@
+!
+{% if vrf_interface is defined %}
+{% for vrf_interfaces in vrf_interface.vrf %}
+interface {{ vrf_interfaces.port1 }}
+ vrf {{ vrf_interfaces.name }}
+!
+{% endfor %}
+{% endif %}
+!
+!
+{% if layer3_interfaces is defined %}
+{% for layer3_interface in layer3_interfaces %}
+interface {{ layer3_interface.interface }}
+ cdp
+ ipv4 address {{ layer3_interface.ip_address | ipaddr('address') }} {{ layer3_interface.ip_address | ipaddr('netmask') }}
+ no shutdown
+!
+{% endfor %}
+{% endif %}
+!
+

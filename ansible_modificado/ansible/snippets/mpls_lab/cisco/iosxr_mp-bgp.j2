@@ -1,0 +1,36 @@
+!
+{% if mpbgp is defined %}
+route-policy permit_all
+  pass
+end-policy
+!
+router bgp {{ mpbgp.as }}
+ address-family vpnv4 unicast
+ bgp router-id {{ mpbgp.router_id }}
+ address-family vpnv4 unicast
+!
+{% for bgp_neighbour in mpbgp.neighbours %}
+ neighbor {{ bgp_neighbour.peer_ip }}
+  remote-as {{ bgp_neighbour.remote_as }}
+  update-source loopback0
+  address-family vpnv4 unicast
+!
+{% endfor %}
+!
+{% for bgp_vrf in mpbgp.vrf %}
+ vrf {{ bgp_vrf.name }}
+   rd {{ bgp_vrf.rd }}
+   address-family ipv4 unicast
+!
+{% endfor %}
+!
+{% for bgp_vrf_neighbor in mpbgp.vrf_neighbours %}
+ vrf {{ bgp_vrf_neighbor.vrf_name }}
+   neighbor {{ bgp_vrf_neighbor.peer_ip }}
+   remote-as {{ bgp_vrf_neighbor.remote_as }}
+   address-family ipv4 unicast
+    route-policy permit_all in
+    route-policy permit_all out
+!
+{% endfor %}
+{% endif %}

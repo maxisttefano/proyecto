@@ -1,0 +1,4 @@
+--- 
+ - name: Include tasks for correct OS
+   include: "{{ ansible_network_os }}.yml"
+   #include: "iosxr.yml"
